@@ -4,13 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { mnemonicToAccount } from "viem/accounts";
 import {
+  ArrowRight,
   Eye,
   EyeOff,
+  History,
   LockKeyhole,
   ShieldCheck,
   WalletCards,
 } from "lucide-react";
-import { unlockWallet } from "@/lib/wallet/storage";
+import {
+  saveWalletAddress,
+  unlockWallet,
+} from "@/lib/wallet/storage";
 
 export default function WalletDashboardPage() {
   const router = useRouter();
@@ -34,8 +39,18 @@ export default function WalletDashboardPage() {
       const mnemonic = await unlockWallet(password);
       const account = mnemonicToAccount(mnemonic);
 
+      /*
+       * Keep the public wallet address available to the
+       * portfolio/activity pages.
+       *
+       * Only the public address is stored here.
+       * The mnemonic and password are never stored by this page.
+       */
+      saveWalletAddress(account.address);
+
       setAddress(account.address);
       setUnlocked(true);
+      setPassword("");
     } catch (err) {
       setError(
         err instanceof Error
@@ -47,6 +62,9 @@ export default function WalletDashboardPage() {
     }
   }
 
+  /*
+   * UNLOCKED WALLET
+   */
   if (unlocked) {
     return (
       <main className="wallet-shell">
@@ -79,6 +97,7 @@ export default function WalletDashboardPage() {
               </p>
             </div>
 
+            {/* Wallet address */}
             <div
               style={{
                 marginTop: 24,
@@ -114,6 +133,37 @@ export default function WalletDashboardPage() {
               </div>
             </div>
 
+            {/* Portfolio button */}
+            <button
+              type="button"
+              className="connect-button wallet-create-button"
+              onClick={() => router.push("/activity")}
+              style={{
+                width: "100%",
+                marginTop: 18,
+              }}
+            >
+              <WalletCards size={19} />
+              <span>View Portfolio</span>
+              <ArrowRight size={18} />
+            </button>
+
+            {/* Activity shortcut */}
+            <button
+              type="button"
+              className="secondary-wallet-action"
+              onClick={() => router.push("/activity")}
+              style={{
+                width: "100%",
+                marginTop: 10,
+                justifyContent: "center",
+              }}
+            >
+              <History size={17} />
+              <span>View Activity</span>
+            </button>
+
+            {/* Security information */}
             <div
               className="wallet-password-security"
               style={{ marginTop: 16 }}
@@ -131,12 +181,41 @@ export default function WalletDashboardPage() {
                 </p>
               </div>
             </div>
+
+            {/* Network status */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                marginTop: 18,
+                fontSize: 11,
+                color: "rgba(255,255,255,.48)",
+              }}
+            >
+              <span
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  background: "#43d17a",
+                  boxShadow:
+                    "0 0 0 4px rgba(67,209,122,.08)",
+                }}
+              />
+
+              <span>Connected to BNB Smart Chain</span>
+            </div>
           </section>
         </div>
       </main>
     );
   }
 
+  /*
+   * LOCKED WALLET
+   */
   return (
     <main className="wallet-shell">
       <div className="wallet-content">
@@ -189,12 +268,13 @@ export default function WalletDashboardPage() {
                 }
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
-                    unlock();
+                    void unlock();
                   }
                 }}
                 placeholder="Enter your wallet password"
                 autoComplete="current-password"
                 className="wallet-password-input"
+                disabled={loading}
               />
 
               <button
@@ -208,6 +288,7 @@ export default function WalletDashboardPage() {
                     ? "Hide password"
                     : "Show password"
                 }
+                disabled={loading}
               >
                 {showPassword ? (
                   <EyeOff size={19} />
@@ -243,7 +324,7 @@ export default function WalletDashboardPage() {
                 ? "wallet-password-continue enabled"
                 : "wallet-password-continue"
             }
-            onClick={unlock}
+            onClick={() => void unlock()}
             disabled={!password || loading}
             style={{
               marginTop: 18,
@@ -257,28 +338,26 @@ export default function WalletDashboardPage() {
                 : "Unlock Wallet"}
             </span>
 
-            <LockKeyhole size={19} />
+            {!loading && <ArrowRight size={18} />}
           </button>
 
-          <button
-            type="button"
-            className="secondary-wallet-action"
-            onClick={() => router.push("/wallet")}
+          <div
             style={{
-              width: "100%",
-              marginTop: 10,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 7,
+              marginTop: 18,
+              fontSize: 10,
+              color: "rgba(255,255,255,.38)",
+              textAlign: "center",
             }}
           >
-            Back to Wallet
-          </button>
-
-          <footer className="wallet-password-footer">
-            <span>TredDEX Wallet</span>
-            <span className="footer-dot">•</span>
+            <ShieldCheck size={14} />
             <span>
-              Self-custodial Web3 infrastructure
+              Your password stays on this device.
             </span>
-          </footer>
+          </div>
         </section>
       </div>
     </main>

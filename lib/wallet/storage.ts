@@ -53,3 +53,18 @@ export function hasWallet(): boolean {
 export function removeWallet(): void {
   localStorage.removeItem(STORAGE_KEY);
 }
+
+const ADDRESS_KEY = "dex-wallet-address";
+
+export function saveWalletAddress(address: string): void {
+  localStorage.setItem(ADDRESS_KEY, address);
+}
+
+export function getWalletAddress(): string {
+  return localStorage.getItem(ADDRESS_KEY) || "";
+}
+
+export function removeWalletAddress(): void {
+  localStorage.removeItem(ADDRESS_KEY);
+}
+

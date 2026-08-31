@@ -9,7 +9,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { saveWallet } from "@/lib/wallet/storage";
-
+import { mnemonicToAccount } from "viem/accounts";
 export default function BackupPage() {
   const router = useRouter();
 
@@ -48,7 +48,14 @@ export default function BackupPage() {
     setError("");
 
     try {
-      await saveWallet(mnemonic, password);
+     await saveWallet(mnemonic, password);
+
+const account = mnemonicToAccount(mnemonic);
+
+localStorage.setItem(
+  "dex-wallet-address",
+  account.address,
+);
 
       /*
        * Remove temporary sensitive values after the
@@ -57,7 +64,8 @@ export default function BackupPage() {
       sessionStorage.removeItem("tdx-pending-password");
       sessionStorage.removeItem("tdx-pending-mnemonic");
 
-      router.replace("/wallet/dashboard");
+   router.replace("/");
+
     } catch (err) {
       console.error(err);
 

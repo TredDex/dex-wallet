@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract TradeUSD is ERC20, ERC20Permit, ERC20Burnable, Ownable {
-    uint8 private constant TOKEN_DECIMALS = 18;
+    uint8 private constant TOKEN_DECIMALS = 6;
 
     constructor(
         address initialOwner,

@@ -6,7 +6,13 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "compile": "node scripts/compile-solc.cjs",
+    "hardhat:compile": "hardhat compile",
+    "compile:hardhat": "hardhat compile --force",
+    "deploy": "node scripts/deploy-portable.cjs",
+    "deploy:testnet": "DEPLOY_NETWORK=bscTestnet node scripts/deploy-portable.cjs",
+    "deploy:mainnet": "DEPLOY_NETWORK=bscMainnet node scripts/deploy-portable.cjs"
   },
   "dependencies": {
     "@noble/curves": "^2.4.0",

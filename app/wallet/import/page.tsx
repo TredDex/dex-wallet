@@ -154,6 +154,10 @@ export default function ImportWalletPage() {
       const imported = importWallet(normalizedPhrase);
 
       await saveWallet(imported.mnemonic, password);
+      localStorage.setItem(
+  "dex-wallet-address",
+  imported.address,
+);
 
       /*
        * The mnemonic and password only existed in React state
@@ -164,7 +168,7 @@ export default function ImportWalletPage() {
       setPassword("");
       setConfirmation("");
 
-      router.replace("/wallet/dashboard");
+    router.replace("/");
     } catch (err) {
       setLoading(false);
 

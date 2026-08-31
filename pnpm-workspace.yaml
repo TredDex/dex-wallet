@@ -3,5 +3,7 @@ allowBuilds:
   bigint-buffer: true
   bufferutil: true
   esbuild: true
+  keccak: false
+  secp256k1: false
   unrs-resolver: true
   utf-8-validate: true

@@ -29,7 +29,7 @@ async function main() {
 
   const tradeUSD = await tradeUSDFactory.deploy(
     deployer.address,
-    ethers.parseUnits("1000000", 18)
+    ethers.parseUnits("1000000", 6)
   );
 
   await tradeUSD.waitForDeployment();
